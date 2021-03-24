@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 import discord
+
 import time
-import twitter
 import datetime
 import json
 import sys
@@ -10,7 +10,7 @@ import argparse
 from pathlib import Path
 
 class MyClient(discord.Client):
-    def __init__(self, log_loc):
+    def __init__(self, log_loc, twit):
         self.log_loc = Path(log_loc)
         if not self.log_loc.exists():
             self.log_loc.touch()
@@ -31,7 +31,8 @@ class MyClient(discord.Client):
         pass
 
     async def on_connect(self):
-        api.PostDirectMessage("Client Connected", twitter_id)
+        if twit:
+            api.PostDirectMessage("Client Connected", twitter_id)
 
 
     async def on_voice_state_update(self, member, before, after):
@@ -69,14 +70,16 @@ class MyClient(discord.Client):
                 output = ",".join([timestamp(), member_name,guild_name, channel_name, "leave"])
                 saveOutput(output, self.log_loc)
                 print(message)
-                api.PostDirectMessage(message, twitter_id)
+                if twit:
+                    api.PostDirectMessage(message, twitter_id)
             if not after.channel == None: #join from nothing
                 channel_name = str(after.channel.name)
                 message = member_name+" joined "+guild_name+" Voice Channel "+channel_name
                 output = ",".join([timestamp(), member_name,guild_name, channel_name, "join"])
                 saveOutput(output, self.log_loc)
                 print(message)
-                api.PostDirectMessage(message, twitter_id)
+                if twit:
+                    api.PostDirectMessage(message, twitter_id)
 
 def saveOutput(message, log):
     with open(log, 'a+') as f:
@@ -107,20 +110,21 @@ if __name__ == "__main__":
         try:
             discord_token = data['discord_token']
             discord_guild_id = data['discord_guild_id']
+            twit = False
             if args.twitter:
+                import twitter
                 api_key = data['api_key']
                 api_secret_key = data['api_secret_key']
                 access_token = data['access_token']
                 access_token_secret = data['access_token_secret']
                 twitter_id = data['twitter_id']
+                api = twitter.Api(consumer_key=api_key,
+                                consumer_secret=api_secret_key,
+                                access_token_key=access_token,
+                                access_token_secret=access_token_secret)
+                twit = True
         except KeyError:
             sys.exit("Error reading config file")
 
-    api = twitter.Api(consumer_key=api_key,
-                    consumer_secret=api_secret_key,
-                    access_token_key=access_token,
-                    access_token_secret=access_token_secret)
-
-
-    client = MyClient(args.log)
+    client = MyClient(args.log, twit)
     client.run(discord_token, bot=False)
