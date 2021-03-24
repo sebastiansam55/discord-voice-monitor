@@ -1,0 +1,9 @@
+{
+    "api_key": "twitter api key",
+    "api_secret_key": "twitter secret api key",
+    "access_token":"twitter access token",
+    "access_token_secret":"twitter access token secret",
+    "discord_token":"discord token",
+    "discord_guild_id": "discord guild id",
+    "twitter_id": "twitter id for dming"
+}
