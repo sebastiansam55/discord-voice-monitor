@@ -93,9 +93,10 @@ def timestamp():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Discord Voice notification bot")
 
-    parser.add_argument('-c', '--config', required=True, dest="config", action="store", default="private.json", help="Config file location")
+    parser.add_argument('-c', '--config', dest="config", action="store", default="private.json", help="Config file location")
     parser.add_argument('-t', '--twitter', dest="twitter", action="store_true", default=False, help="Twitter DMs")
     parser.add_argument('-l', '--log', dest="log", action="store", default="voice.log", help="Log Location")
+    parser.add_argument('-b', '--bot', dest="bot", action="store_true", default=False, help="Login in as bot")
     parser.add_argument('--header', dest="header", action="store_true", default=False, help="Output header")
 
     args = parser.parse_args()
@@ -127,4 +128,4 @@ if __name__ == "__main__":
             sys.exit("Error reading config file")
 
     client = MyClient(args.log, twit)
-    client.run(discord_token, bot=False)
+    client.run(discord_token, bot=args.bot)
