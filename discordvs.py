@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import discord
+from discord import errors.LoginFailure
 
 import time
 import datetime
