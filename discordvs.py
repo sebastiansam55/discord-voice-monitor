@@ -128,4 +128,13 @@ if __name__ == "__main__":
             sys.exit("Error reading config file")
 
     client = MyClient(args.log, twit)
-    client.run(discord_token, bot=args.bot)
+    try:
+        client.run(discord_token, bot=args.bot)
+    except LoginFailure:
+        if twit:
+            api.PostDirectMessage("Bad login", twitter_id)
+        else:
+            print("Login failure!!!")
+
+
+
